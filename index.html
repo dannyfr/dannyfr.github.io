@@ -20,6 +20,9 @@
     #user-input { flex: 1; padding: 0.5rem; font-size: 1rem; }
     button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; }
     #journal-section { padding: 1rem; background: white; border-top: 1px solid #ccc; }
+    #debug-info { margin-top: 1rem; font-size: 0.9rem; color: #444; }
+    .error { color: red; }
+    .success { color: green; }
   </style>
 </head>
 <body>
@@ -35,6 +38,7 @@
         <input type="text" id="user-input" placeholder="Type your message..." required />
         <button type="submit">Send</button>
       </form>
+      <div id="debug-info"></div>
     </main>
 
     <section id="journal-section">
@@ -44,7 +48,6 @@
   </div>
 
   <script>
-    // Simulated API key injection point (injected from Android wrapper at runtime)
     let injectedApiKey = null; // Overwritten by Android wrapper
 
     const chatWindow = document.getElementById("chat-window");
@@ -52,9 +55,15 @@
     const userInput = document.getElementById("user-input");
     const journalEntries = document.getElementById("journal-entries");
     const profileSelector = document.getElementById("profile-selector");
+    const debugInfo = document.getElementById("debug-info");
 
     let currentJournalId = null;
     let journals = {}; // Local journal data per ID
+
+    function updateDebug(message, type = "") {
+      debugInfo.textContent = message;
+      debugInfo.className = type;
+    }
 
     function loadProfiles() {
       const stored = localStorage.getItem("journals");
@@ -85,19 +94,31 @@
     }
 
     async function callOpenAI(prompt) {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${injectedApiKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }]
-        })
-      });
-      const data = await response.json();
-      return data.choices[0].message.content;
+      updateDebug("Calling OpenAI...", "");
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${injectedApiKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        updateDebug("✅ OpenAI response received.", "success");
+        return data.choices[0].message.content;
+      } catch (err) {
+        updateDebug("❌ Error: " + err.message, "error");
+        return "(An error occurred while contacting OpenAI.)";
+      }
     }
 
     chatForm.addEventListener("submit", async (e) => {
@@ -128,7 +149,6 @@
 
     profileSelector.addEventListener("change", e => switchProfile(e.target.value));
 
-    // Prompt for profile ID on first load
     window.addEventListener("load", () => {
       loadProfiles();
       if (!profileSelector.options.length) {
@@ -146,9 +166,9 @@
       switchProfile(profileSelector.value);
     });
 
-    // Hook for Android wrapper to inject API key safely
     window.setApiKey = function(key) {
       injectedApiKey = key;
+      updateDebug(`🔑 API Key injected (prefix): ${key.slice(0, 5)}...`, "success");
     };
   </script>
 </body>
