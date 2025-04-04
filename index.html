@@ -1,0 +1,155 @@
+<!--
+  This is the main HTML file for a GitHub Pages-hosted chat and journal web app.
+  The actual API key is securely injected at runtime from the Android wrapper,
+  built with MIT App Inventor. This web app is responsible for handling the
+  chat interface, context retrieval, API call construction, and local journal storage.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Journal Chat Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    header { background: #3f51b5; color: white; padding: 1rem; text-align: center; }
+    main { padding: 1rem; }
+    #chat-window { background: white; border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 0.5rem; margin-bottom: 1rem; }
+    #chat-form { display: flex; gap: 0.5rem; }
+    #user-input { flex: 1; padding: 0.5rem; font-size: 1rem; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; }
+    #journal-section { padding: 1rem; background: white; border-top: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Journal Chat Assistant</h1>
+      <select id="profile-selector"></select>
+    </header>
+
+    <main>
+      <section id="chat-window"></section>
+      <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type your message..." required />
+        <button type="submit">Send</button>
+      </form>
+    </main>
+
+    <section id="journal-section">
+      <h2>Journal Entries</h2>
+      <ul id="journal-entries"></ul>
+    </section>
+  </div>
+
+  <script>
+    // Simulated API key injection point (injected from Android wrapper at runtime)
+    let injectedApiKey = null; // Overwritten by Android wrapper
+
+    const chatWindow = document.getElementById("chat-window");
+    const chatForm = document.getElementById("chat-form");
+    const userInput = document.getElementById("user-input");
+    const journalEntries = document.getElementById("journal-entries");
+    const profileSelector = document.getElementById("profile-selector");
+
+    let currentJournalId = null;
+    let journals = {}; // Local journal data per ID
+
+    function loadProfiles() {
+      const stored = localStorage.getItem("journals");
+      if (stored) {
+        journals = JSON.parse(stored);
+        Object.keys(journals).forEach(id => {
+          const opt = document.createElement("option");
+          opt.value = id;
+          opt.textContent = `Profile: ${id}`;
+          profileSelector.appendChild(opt);
+        });
+      }
+    }
+
+    function switchProfile(id) {
+      currentJournalId = id;
+      displayJournal();
+    }
+
+    function displayJournal() {
+      const journal = journals[currentJournalId] || [];
+      journalEntries.innerHTML = "";
+      journal.forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = `${entry.timestamp}: ${entry.message}`;
+        journalEntries.appendChild(li);
+      });
+    }
+
+    async function callOpenAI(prompt) {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${injectedApiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = userInput.value;
+      userInput.value = "";
+      appendMessage("user", msg);
+      storeEntry(msg);
+      const reply = await callOpenAI(msg);
+      appendMessage("assistant", reply);
+      storeEntry(reply, "assistant");
+    });
+
+    function appendMessage(role, text) {
+      const div = document.createElement("div");
+      div.textContent = `${role}: ${text}`;
+      chatWindow.appendChild(div);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function storeEntry(message, role = "user") {
+      const entry = { timestamp: new Date().toLocaleString(), message, role };
+      if (!journals[currentJournalId]) journals[currentJournalId] = [];
+      journals[currentJournalId].push(entry);
+      localStorage.setItem("journals", JSON.stringify(journals));
+      displayJournal();
+    }
+
+    profileSelector.addEventListener("change", e => switchProfile(e.target.value));
+
+    // Prompt for profile ID on first load
+    window.addEventListener("load", () => {
+      loadProfiles();
+      if (!profileSelector.options.length) {
+        const newId = prompt("Enter a new journal ID:");
+        if (newId) {
+          journals[newId] = [];
+          localStorage.setItem("journals", JSON.stringify(journals));
+          const opt = document.createElement("option");
+          opt.value = newId;
+          opt.textContent = `Profile: ${newId}`;
+          profileSelector.appendChild(opt);
+          profileSelector.value = newId;
+        }
+      }
+      switchProfile(profileSelector.value);
+    });
+
+    // Hook for Android wrapper to inject API key safely
+    window.setApiKey = function(key) {
+      injectedApiKey = key;
+    };
+  </script>
+</body>
+</html>
