@@ -1,248 +1,247 @@
 {
   "quiz_id": "scf_utility_workshop_v1",
   "title": "Utility-First Blockchain for SCF-Adjacent Systems",
-  "version": 1,
+  "version": 2,
   "questions": [
     {
       "id": "q01",
-      "kind": "tf",
       "text": "SCF (Supply Chain Finance) is mainly about improving cashflow across buyers and suppliers by using trade events like invoices and approvals.",
-      "correct": true
+      "correct": true,
+      "answer": "True. SCF improves working capital by using commercial events (POs, invoices, approvals, delivery) to let suppliers get paid earlier and/or buyers pay later with financing in between."
     },
     {
       "id": "q02",
-      "kind": "tf",
       "text": "Reverse factoring is buyer-led: once the buyer approves an invoice, a financier can pay the supplier early and get repaid by the buyer later.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Reverse factoring is typically initiated by the buyer; the approved invoice becomes the basis for a financier to advance funds to the supplier, then collect from the buyer at maturity."
     },
     {
       "id": "q03",
-      "kind": "tf",
       "text": "In reverse factoring, the buyer usually pays earlier than normal because the supplier is paid early.",
-      "correct": false
+      "correct": false,
+      "answer": "False. The supplier is paid early by the financier; the buyer usually pays the financier at the original (or negotiated) maturity date, not earlier."
     },
     {
       "id": "q04",
-      "kind": "tf",
       "text": "The invoice approval step is a key gate, because it changes an invoice from 'a supplier claim' into 'an approved payable' the buyer acknowledges.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Approval converts the invoice into an acknowledged obligation, reducing dispute risk and making it financeable at better terms."
     },
     {
       "id": "q05",
-      "kind": "tf",
       "text": "Paper-based invoice workflows mostly fail because PDFs are impossible to store digitally.",
-      "correct": false
+      "correct": false,
+      "answer": "False. PDFs can be stored; the issue is manual processing, inconsistent data, slow approvals, weak traceability, and error/fraud risk."
     },
     {
       "id": "q06",
-      "kind": "tf",
       "text": "A big real-world problem in SCF is that different parties often have different 'versions of truth' about invoice status.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Buyer, supplier, and financier often rely on separate systems and timestamps, causing disputes and reconciliation work over what the current status actually is."
     },
     {
       "id": "q07",
-      "kind": "tf",
       "text": "A shared ledger can reduce reconciliation work by giving all parties the same view of invoice state transitions.",
-      "correct": true
+      "correct": true,
+      "answer": "True. If state transitions are recorded consistently and shared, parties spend less time reconciling mismatched records and more time executing the workflow."
     },
     {
       "id": "q08",
-      "kind": "tf",
       "text": "Immutability means mistakes can never be corrected in the system.",
-      "correct": false
+      "correct": false,
+      "answer": "False. Immutability means past records aren’t overwritten; corrections are made by appending compensating events (e.g., cancel/reissue, adjustment) with traceable history."
     },
     {
       "id": "q09",
-      "kind": "tf",
       "text": "Smart contracts are mainly useful because they force the allowed sequence of steps (e.g., you can't fund before approval).",
-      "correct": true
+      "correct": true,
+      "answer": "True. Smart contracts can enforce a state machine and permissions so invalid transitions (like funding an unapproved invoice) are rejected by code."
     },
     {
       "id": "q10",
-      "kind": "tf",
       "text": "Blockchains automatically make real-world inputs (like delivery confirmation) true and trustworthy.",
-      "correct": false
+      "correct": false,
+      "answer": "False. Blockchains preserve what was submitted; they don’t verify the real world. Trust depends on integrations/oracles, controls, and evidence quality."
     },
     {
       "id": "q11",
-      "kind": "tf",
       "text": "An oracle / integration feed is often the weakest link, because it can inject wrong data into an otherwise 'correct' ledger.",
-      "correct": true
+      "correct": true,
+      "answer": "True. If the integration submits incorrect or spoofed events, the ledger can faithfully record bad data; verification and controls around inputs are critical."
     },
     {
       "id": "q12",
-      "kind": "tf",
       "text": "Storing a hash of a document on-chain proves the document is accurate about the real world.",
-      "correct": false
+      "correct": false,
+      "answer": "False. A hash proves integrity (the document hasn’t changed since hashing), not that the content is truthful or corresponds to reality."
     },
     {
       "id": "q13",
-      "kind": "tf",
       "text": "A minimal SCF invoice state machine can be: Created → Approved → FinancingRequested → Funded → Settled.",
-      "correct": true
+      "correct": true,
+      "answer": "True. That’s a common minimal lifecycle for invoice-based financing workflows, though real systems may add states like Rejected, Cancelled, Disputed, or PartiallySettled."
     },
     {
       "id": "q14",
-      "kind": "tf",
       "text": "A good state machine prevents invalid jumps like Created → Funded without approval.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Valid transitions constrain the workflow so each step has required prerequisites and produces an auditable sequence."
     },
     {
       "id": "q15",
-      "kind": "tf",
       "text": "Access control is optional because the chain is already secure.",
-      "correct": false
+      "correct": false,
+      "answer": "False. Chain security doesn’t replace application authorization. You still must restrict who can create, approve, request financing, fund, or settle."
     },
     {
       "id": "q16",
-      "kind": "tf",
       "text": "In most designs, only the buyer (or their delegated approver) should be allowed to approve invoices.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Approval is the buyer’s attestation that goods/services are accepted and payable; suppliers or financiers should not self-approve."
     },
     {
       "id": "q17",
-      "kind": "tf",
       "text": "Letting the financier approve invoices is usually fine because they are the ones taking risk.",
-      "correct": false
+      "correct": false,
+      "answer": "False. The buyer is the party that owes payment; financier risk assessment should not replace buyer acceptance/approval, otherwise incentives and disputes get messy fast."
     },
     {
       "id": "q18",
-      "kind": "tf",
       "text": "On-chain data should usually be minimal: identifiers, state, timestamps, hashes/pointers, and permissions.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Enterprise designs often keep sensitive payloads off-chain and put only what’s needed for coordination, auditability, and integrity on-chain."
     },
     {
       "id": "q19",
-      "kind": "tf",
       "text": "Putting full invoice PDFs and sensitive commercial terms on-chain is usually a good idea in enterprise SCF.",
-      "correct": false
+      "correct": false,
+      "answer": "False. It creates privacy, confidentiality, and compliance risks. Typically you store references/hashes and keep the full documents off-chain with controlled access."
     },
     {
       "id": "q20",
-      "kind": "tf",
       "text": "Integrations usually include ERP (invoice creation), logistics (delivery proof), and banking (payment settlement).",
-      "correct": true
+      "correct": true,
+      "answer": "True. Those three systems usually generate the key events the workflow depends on: invoice issuance/approval, delivery acceptance, and payment confirmation."
     },
     {
       "id": "q21",
-      "kind": "tf",
       "text": "Payment settlement is usually off-chain (bank rails), even if invoice state is tracked on-chain.",
-      "correct": true
+      "correct": true,
+      "answer": "True. In most enterprise settings, final money movement happens through bank rails; the chain records state and evidence, not the actual fiat transfer."
     },
     {
       "id": "q22",
-      "kind": "tf",
       "text": "ISO 20022 is mainly about richer structured payment data that helps matching and reconciliation.",
-      "correct": true
+      "correct": true,
+      "answer": "True. ISO 20022 enables more structured fields and references in payment messages, improving automation and reducing reconciliation ambiguity."
     },
     {
       "id": "q23",
-      "kind": "tf",
       "text": "E-invoicing trends matter because they standardize invoice data and reduce ambiguity and manual work.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Standard formats and validation rules turn invoices into consistent data objects, which reduces manual keying, mismatches, and disputes."
     },
     {
       "id": "q24",
-      "kind": "tf",
       "text": "The biggest driver of financing cost is always pure credit risk; operational friction never matters.",
-      "correct": false
+      "correct": false,
+      "answer": "False. Operational friction (uncertain status, disputes, verification costs, manual handling) can materially increase cost and delay—even when credit risk is stable."
     },
     {
       "id": "q25",
-      "kind": "tf",
       "text": "A shared system can reduce some fraud types, like duplicate invoice submission inside the network.",
-      "correct": true
+      "correct": true,
+      "answer": "True. Shared identifiers and a single lifecycle can prevent or detect re-use of the same invoice within the network (though not all fraud types)."
     },
     {
       "id": "q26",
-      "kind": "tf",
       "text": "A shared ledger completely prevents collusion between a buyer and supplier.",
-      "correct": false
+      "correct": false,
+      "answer": "False. A ledger helps detect inconsistencies but cannot prevent intentional collusion; governance, audits, and independent verification are still needed."
     },
     {
       "id": "q27",
-      "kind": "tf",
       "text": "A token is required for a blockchain-based workflow to function in an enterprise setting.",
-      "correct": false
+      "correct": false,
+      "answer": "False. Enterprise workflows can run on permissioned or public chains without native incentives; utility comes from shared state, auditability, and automation."
     },
     {
       "id": "q28",
-      "kind": "tf",
       "text": "Token incentives can create perverse behavior, like encouraging spammy invoices to farm rewards.",
-      "correct": true
+      "correct": true,
+      "answer": "True. If rewards track proxy metrics (volume, activity), participants may optimize for the metric rather than real business value—classic cobra effect."
     },
     {
       "id": "q29",
-      "kind": "tf",
       "text": "Utility-first design focuses on shared state, auditability, and automation, not speculation.",
-      "correct": true
+      "correct": true,
+      "answer": "True. The primary goal is operational correctness and coordination; tokens (if any) are secondary and should not be required for basic workflow utility."
     },
     {
       "id": "q30",
-      "kind": "tf",
       "text": "If a system only works when the token price goes up, it's probably not robust system design.",
-      "correct": true
+      "correct": true,
+      "answer": "True. A system dependent on speculative appreciation is fragile; robust systems still work when incentives cool or market conditions change."
     },
-
     {
       "id": "q31",
-      "kind": "prompt",
-      "text": "In your own words: why is buyer approval such a big deal in reverse factoring?",
-      "correct": null
+      "text": "In reverse factoring, is buyer invoice approval the key step that makes financing cheaper and reduces dispute risk?",
+      "correct": true,
+      "answer": "Yes. Buyer approval is the attestation that the invoice is valid and payable, reducing uncertainty and enabling better financing terms."
     },
     {
       "id": "q32",
-      "kind": "prompt",
-      "text": "In your own words: what does a 'single source of truth' actually mean in a multi-company workflow?",
-      "correct": null
+      "text": "Does a 'single source of truth' mean all parties (buyer, supplier, financier) share the same authoritative invoice state and timestamps instead of reconciling separate records?",
+      "correct": true,
+      "answer": "Yes. It means there is one authoritative lifecycle record used by all parties, reducing disputes and reconciliation workload."
     },
     {
       "id": "q33",
-      "kind": "prompt",
-      "text": "In your own words: why does 'immutability' not mean 'no corrections'?",
-      "correct": null
+      "text": "Does 'immutability' still allow corrections by adding new events (like cancellation/adjustment) rather than rewriting history?",
+      "correct": true,
+      "answer": "Yes. You correct by appending compensating actions with traceability, not by erasing or overwriting past entries."
     },
     {
       "id": "q34",
-      "kind": "prompt",
-      "text": "In your own words: what are the risks of trusting an oracle/integration feed?",
-      "correct": null
+      "text": "Are integrations/oracles a major risk because they can inject wrong or spoofed real-world events into an otherwise tamper-evident ledger?",
+      "correct": true,
+      "answer": "Yes. If the input source lies or is compromised, the ledger can record bad data perfectly; controls and verification around inputs are essential."
     },
     {
       "id": "q35",
-      "kind": "prompt",
-      "text": "In your own words: what should be stored on-chain vs off-chain for invoices, and why?",
-      "correct": null
+      "text": "Should sensitive invoice documents and commercial terms usually stay off-chain, with only IDs, states, timestamps, and hashes/pointers stored on-chain?",
+      "correct": true,
+      "answer": "Yes. Keeping sensitive payloads off-chain reduces confidentiality and compliance risks while still enabling integrity and coordination via hashes/pointers."
     },
     {
       "id": "q36",
-      "kind": "prompt",
-      "text": "In your own words: name one abuse case in SCF workflows and one minimum mitigation.",
-      "correct": null
+      "text": "Is 'finance the same invoice twice' (duplicate financing) a realistic abuse case that needs mitigations like unique invoice IDs and shared status tracking?",
+      "correct": true,
+      "answer": "Yes. Duplicate financing is a known risk; shared lifecycle status and unique identifiers help prevent or detect it within a participant network."
     },
     {
       "id": "q37",
-      "kind": "prompt",
-      "text": "In your own words: why does access control matter even if the ledger is tamper-evident?",
-      "correct": null
+      "text": "Do you still need access control in a tamper-evident system, because integrity doesn't decide who is allowed to approve, fund, or settle?",
+      "correct": true,
+      "answer": "Yes. Tamper-evidence doesn't equal authorization; you must explicitly restrict who can perform each state transition."
     },
     {
       "id": "q38",
-      "kind": "prompt",
-      "text": "In your own words: what makes settlement confirmation hard, and what helps it?",
-      "correct": null
+      "text": "Is settlement confirmation hard mainly because bank rails, references, and timing can be messy, and it improves when payments carry clean structured identifiers (e.g., ISO 20022 references)?",
+      "correct": true,
+      "answer": "Yes. Matching payments to invoices is often the bottleneck; structured references and consistent identifiers reduce ambiguity and manual reconciliation."
     },
     {
       "id": "q39",
-      "kind": "prompt",
-      "text": "In your own words: explain one reason tokenomics can be dangerous in corporate workflows.",
-      "correct": null
+      "text": "Can tokenomics be dangerous in corporate workflows because people optimize for reward metrics (activity/volume) rather than real operational value?",
+      "correct": true,
+      "answer": "Yes. Incentives tied to proxy metrics can drive gaming behavior (cobra effect), creating spam or distorted workflows that look active but add no value."
     },
     {
       "id": "q40",
-      "kind": "prompt",
-      "text": "In your own words: if you could improve only one layer first (ERP, logistics proof, bank confirmation, ledger), which would you pick and why?",
-      "correct": null
+      "text": "Would improving any one layer first (ERP, logistics proof, bank confirmation, or ledger) be a defensible strategy depending on which bottleneck causes the most delays and disputes?",
+      "correct": true,
+      "answer": "Yes. The highest-leverage layer varies by context; you pick the bottleneck that dominates cycle time, dispute rate, or reconciliation cost in the current process."
     }
   ]
 }
